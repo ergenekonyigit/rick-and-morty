@@ -26,7 +26,15 @@ function HomeNavigator() {
           header: () => <Header title="Rick and Morty" />,
         }}
       />
-      <Stack.Screen name="About" component={About} />
+      <Stack.Screen
+        name="Details"
+        component={Details}
+        options={({ route }) => ({
+          header: () => (
+            <Header title={route?.params?.item?.name ?? "Detail"} back />
+          ),
+        })}
+      />
     </Stack.Navigator>
   );
 }
@@ -77,7 +85,6 @@ function AppNavigator() {
           }}
         >
           <Stack.Screen name="Main" component={TabNavigator} />
-          <Stack.Screen name="Details" component={Details} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

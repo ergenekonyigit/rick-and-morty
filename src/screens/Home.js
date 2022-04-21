@@ -35,7 +35,12 @@ export const Home = ({ navigation }) => {
 
   const keyExtractor = (item) => `${item?.id}`;
 
-  const renderItem = ({ item }) => <Card item={item} />;
+  const renderItem = ({ item }) => (
+    <Card
+      item={item}
+      onPress={() => navigation.navigate("Details", { item })}
+    />
+  );
 
   const listEmptyComponent = () => {
     return <Text>No Data Found</Text>;
