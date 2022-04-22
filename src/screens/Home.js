@@ -50,7 +50,7 @@ export const Home = ({ navigation }) => {
   const { colors } = useTheme();
 
   const init = async () => {
-    const response = await getCharacters(0, searchQuery);
+    const response = await getCharacters(1, searchQuery);
     const { data: { results = [] } = {} } = response || {};
     setState({ characters: results, loading: false });
   };
@@ -88,7 +88,7 @@ export const Home = ({ navigation }) => {
   const onSearchName = async (query) => {
     console.log("onChangeText", query);
     setState({ searchQuery: query });
-    pageRef.current = 0;
+    pageRef.current = 1;
     const response = await getCharacters(pageRef.current + 1, searchQuery);
     const { data: { info, results = [] } = {} } = response || {};
     console.log("response info", info);
@@ -100,7 +100,7 @@ export const Home = ({ navigation }) => {
   };
 
   const onEndReachedCharacters = async () => {
-    if (isLastCharacterPage.current) {
+    if (isLastCharacterPage.current || charactersLoadingMore) {
       return;
     }
     setState({ charactersLoadingMore: true });
@@ -117,7 +117,7 @@ export const Home = ({ navigation }) => {
   };
 
   const onEndReachedEpisodes = async () => {
-    if (isLastEpisodePage.current) {
+    if (isLastEpisodePage.current || episodesLoadingMore) {
       return;
     }
 
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   contentContainerStyle: {
     paddingTop: responsive.number(10),
     paddingHorizontal: responsive.number(16),
-    paddingBottom: responsive.number(40),
+    paddingBottom: responsive.number(100),
   },
   listWrapper: {
     flexDirection: "row",
