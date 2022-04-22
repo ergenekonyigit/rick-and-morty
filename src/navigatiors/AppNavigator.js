@@ -12,7 +12,7 @@ import HomeIcon from "../assets/icons/home.svg";
 import HeartIcon from "../assets/icons/heart.svg";
 import { Header } from "../components";
 import { darkTheme, lightTheme } from "../utils/theme";
-import { FavoritesProvider } from "../contex/FavoritesContext";
+import { FavoritesProvider } from "../context/FavoritesContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

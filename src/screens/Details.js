@@ -3,7 +3,7 @@ import React, { useReducer } from "react";
 import { DetailCard, Button } from "../components";
 import { responsive } from "../utils/responsive";
 import HeartIcon from "../assets/icons/heart.svg";
-import { useFavorites } from "../contex/FavoritesContext";
+import { useFavorites } from "../context/FavoritesContext";
 
 export const Details = ({ route }) => {
   const { item = {} } = route?.params;
