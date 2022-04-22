@@ -9,6 +9,9 @@ export const lightTheme = {
     appCard: "#D7F4F8",
     alive: "#27AE60",
     dead: "#EB5757",
+    tabBackground: "#F2F2F2",
+    tabIndicatior: "#FFF",
+    episodeCard: "#F2FDFF",
   },
 };
 
@@ -23,5 +26,8 @@ export const darkTheme = {
     appCard: "#03AEC7",
     alive: "#6FCF97",
     dead: "#EB5757",
+    tabBackground: "#3A3A3C",
+    tabIndicatior: "#8D8D93",
+    episodeCard: "#A9F3FC",
   },
 };

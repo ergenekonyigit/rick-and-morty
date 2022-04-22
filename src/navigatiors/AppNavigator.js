@@ -52,7 +52,7 @@ function TabNavigator() {
         options={{
           header: () => <Header title="Favorites" />,
           tabBarIcon: ({ focused, color, size }) => (
-            <HeartIcon color={focused ? "#03AEC7" : "gray"} />
+            <HeartIcon fill="none" color={focused ? "#03AEC7" : "gray"} />
           ),
           tabBarActiveTintColor: "#03AEC7",
           tabBarInactiveTintColor: "gray",

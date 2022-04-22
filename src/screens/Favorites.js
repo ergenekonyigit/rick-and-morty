@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
 import React from "react";
 import { useTheme } from "@react-navigation/native";
-import { FlatList } from "react-native-gesture-handler";
 import Animated, {
   ZoomIn,
   LightSpeedOutLeft,
@@ -15,6 +14,9 @@ import Animated, {
   Transition,
   Layout,
   SequencedTransition,
+  CurvedTransition,
+  ZoomOut,
+  interpolate,
 } from "react-native-reanimated";
 import { useFavorites } from "../context/FavoritesContext";
 import { Card } from "../components";
@@ -39,12 +41,13 @@ export const Favorites = ({ navigation }) => {
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <FlatList
+      <Animated.FlatList
         data={favorites}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={listEmptyComponent}
+        itemLayoutAnimation={Layout.springify()}
       />
     </View>
   );
@@ -61,7 +64,9 @@ const FavoriteCard = ({ item }) => {
       console.log("started gesture");
     })
     .onUpdate((e) => {
-      transitionValueX.value = e.translationX + start.value;
+      if (e.translationX + start.value < 0) {
+        transitionValueX.value = e.translationX + start.value;
+      }
     })
     .onEnd((e) => {
       console.log("aaaa", e);
@@ -80,6 +85,23 @@ const FavoriteCard = ({ item }) => {
     };
   });
 
+  const swipeDeleteTextStyles = useAnimatedStyle(() => {
+    return {
+      color: colors.background,
+      padding: 10,
+      fontWeight: "500",
+      transform: [
+        {
+          scale: interpolate(
+            transitionValueX.value,
+            [-151, -150, 0, 1],
+            [1, 1, 0, 0]
+          ),
+        },
+      ],
+    };
+  });
+
   const swipeDeleteContainerStyle = {
     position: "absolute",
     height: responsive.number(150),
@@ -90,35 +112,26 @@ const FavoriteCard = ({ item }) => {
     borderRadius: responsive.number(16),
   };
 
-  const swipeDeleteTextStyle = {
-    color: colors.background,
-    padding: responsive.number(10),
-    fontWeight: "500",
-  };
-
   return (
-    <>
-      <Animated.View
-        style={swipeDeleteContainerStyle}
-        entering={ZoomIn.delay(300)}
-        exiting={LightSpeedOutLeft}
-      >
-        <Text style={swipeDeleteTextStyle}>Remove from Favorites</Text>
+    <Animated.View
+      entering={ZoomIn}
+      exiting={ZoomOut}
+      layout={Layout.springify()}
+    >
+      <Animated.View style={swipeDeleteContainerStyle}>
+        <Animated.Text style={swipeDeleteTextStyles}>
+          Remove from Favorites
+        </Animated.Text>
       </Animated.View>
       <GestureDetector gesture={gesture}>
-        <Animated.View
-          entering={ZoomIn}
-          exiting={LightSpeedOutLeft}
-          style={animatedStyles}
-          layout={SequencedTransition}
-        >
+        <Animated.View style={animatedStyles}>
           <Card
             item={item}
             //onPress={() => navigation.navigate("Details", { item })}
           />
         </Animated.View>
       </GestureDetector>
-    </>
+    </Animated.View>
   );
 };
 

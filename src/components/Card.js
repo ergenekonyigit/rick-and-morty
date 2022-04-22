@@ -1,58 +1,112 @@
-import { StyleSheet, Image, View, Text, Pressable } from "react-native";
+import { StyleSheet, Image, View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { responsive } from "../utils/responsive";
 import { useTheme } from "@react-navigation/native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useFavorites } from "../context/FavoritesContext";
+
+import HeartIcon from "../assets/icons/heart.svg";
+import HeartIconFill from "../assets/icons/heartFill.svg";
+
+const CardContainer = React.memo(
+  ({ item, onPress, isFavorite, removeFavorite, addFavorite }) => {
+    const { colors } = useTheme();
+
+    const handleFavorites = async () => {
+      if (isFavorite) {
+        await removeFavorite(item);
+      } else {
+        await addFavorite(item);
+      }
+    };
+
+    const containerStyle = {
+      backgroundColor: colors.appCard,
+    };
+
+    const textLabelStyle = {
+      color: colors.secondaryText,
+      width: responsive.number(170),
+    };
+
+    const textStyle = {
+      color: colors.text,
+      width: responsive.number(170),
+    };
+
+    const statusStyle = {
+      backgroundColor: item?.status === "Alive" ? colors.alive : colors.dead,
+    };
+
+    if (item.id == 1) {
+      console.log("render");
+    }
+
+    return (
+      <>
+        <TouchableWithoutFeedback
+          style={[styles.container, containerStyle]}
+          onPress={onPress}
+        >
+          <Image source={{ uri: item?.image }} style={styles.image} />
+          <View style={styles.rightContainer}>
+            <Text style={[styles.name, textStyle]} numberOfLines={1}>
+              {item?.name}
+            </Text>
+            <View style={styles.statusContainer}>
+              <View style={[styles.status, statusStyle]} />
+              <Text style={[styles.statusText, textStyle]}>
+                {item?.status} - {item?.species}
+              </Text>
+            </View>
+
+            <Text style={[styles.detailLabel, textLabelStyle]}>Gender:</Text>
+            <Text style={[styles.detail, textStyle]}>{item?.gender}</Text>
+
+            <Text style={[styles.detailLabel, textLabelStyle]}>
+              Last known location:
+            </Text>
+            <Text style={[styles.detail, textStyle]} numberOfLines={1}>
+              {item?.location?.name}
+            </Text>
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableOpacity style={styles.icon} onPress={handleFavorites}>
+          {isFavorite ? (
+            <HeartIconFill color="red" />
+          ) : (
+            <HeartIcon color="white" />
+          )}
+        </TouchableOpacity>
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    const { isFavorite: prevIsFavorite } = prevProps || {};
+    const { isFavorite: nextIsFavorite } = nextProps || {};
+
+    if (nextIsFavorite === prevIsFavorite) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+);
 
 export const Card = ({ item, onPress }) => {
-  const { colors } = useTheme();
-
-  const containerStyle = {
-    backgroundColor: colors.appCard,
-  };
-
-  const textLabelStyle = {
-    color: colors.secondaryText,
-    width: responsive.number(170),
-  };
-
-  const textStyle = {
-    color: colors.text,
-    width: responsive.number(170),
-  };
-
-  const statusStyle = {
-    backgroundColor: item?.status === "Alive" ? colors.alive : colors.dead,
-  };
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
+  const isFavorite =
+    favorites.findIndex((favorite) => favorite.id === item.id) > -1;
 
   return (
-    <TouchableWithoutFeedback
-      style={[styles.container, containerStyle]}
+    <CardContainer
+      item={item}
       onPress={onPress}
-    >
-      <Image source={{ uri: item?.image }} style={styles.image} />
-      <View style={styles.rightContainer}>
-        <Text style={[styles.name, textStyle]} numberOfLines={1}>
-          {item?.name}
-        </Text>
-        <View style={styles.statusContainer}>
-          <View style={[styles.status, statusStyle]} />
-          <Text style={[styles.statusText, textStyle]}>
-            {item?.status} - {item?.species}
-          </Text>
-        </View>
-
-        <Text style={[styles.detailLabel, textLabelStyle]}>Gender:</Text>
-        <Text style={[styles.detail, textStyle]}>{item?.gender}</Text>
-
-        <Text style={[styles.detailLabel, textLabelStyle]}>
-          Last known location:
-        </Text>
-        <Text style={[styles.detail, textStyle]} numberOfLines={1}>
-          {item?.location?.name}
-        </Text>
-      </View>
-    </TouchableWithoutFeedback>
+      favorites={favorites}
+      addFavorite={addFavorite}
+      removeFavorite={removeFavorite}
+      isFavorite={isFavorite}
+    />
   );
 };
 
@@ -105,5 +159,10 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 12,
     marginRight: responsive.number(6),
+  },
+  icon: {
+    position: "absolute",
+    right: responsive.number(10),
+    top: responsive.number(10),
   },
 });

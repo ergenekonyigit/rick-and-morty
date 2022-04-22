@@ -3,6 +3,7 @@ import React, { useReducer } from "react";
 import { DetailCard, Button } from "../components";
 import { responsive } from "../utils/responsive";
 import HeartIcon from "../assets/icons/heart.svg";
+import HeartIconFill from "../assets/icons/heartFill.svg";
 import { useFavorites } from "../context/FavoritesContext";
 
 export const Details = ({ route }) => {
@@ -30,7 +31,7 @@ export const Details = ({ route }) => {
       <Button
         title={isFavorite(item) ? "Added" : "Add to Favorite"}
         onPress={addToFavorites}
-        Icon={HeartIcon}
+        Icon={isFavorite(item) ? HeartIconFill : HeartIcon}
       />
     </View>
   );
