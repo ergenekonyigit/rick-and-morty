@@ -3,46 +3,33 @@ import React, { useReducer } from "react";
 import { DetailCard, Button } from "../components";
 import { responsive } from "../utils/responsive";
 import HeartIcon from "../assets/icons/heart.svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { combineReducers } from "../utils/combineReducer";
-
-const initialState = {
-  favoriteList : [],
-};
+import { useFavorites } from "../contex/FavoritesContext";
 
 export const Details = ({ route }) => {
   const { item = {} } = route?.params;
-  const [state, setState] = useReducer(combineReducers, initialState);
-
-  const { favoriteList = [] } = state || {};
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
 
   const isFavorite = (item) => {
-
-    const itemIndex = favoriteList.findIndex((favorite) => favorite.id === item.id);
+    const itemIndex = favorites.findIndex(
+      (favorite) => favorite.id === item.id
+    );
     return itemIndex > -1;
-  }
+  };
 
-  const addFavorite = async() => {
+  const addToFavorites = async () => {
     if (isFavorite(item)) {
-      const newList = favoriteList.filter((favorite) => favorite.id !== item.id );
-      
-      await AsyncStorage.setItem('favorites', JSON.stringify(newList));
-      
-      setState({ favoriteList: newList });
+      await removeFavorite(item);
     } else {
-      const newList = [...favoriteList, item];
-      await AsyncStorage.setItem('favorites', JSON.stringify(newList));
-
-      setState({ favoriteList: newList });
+      await addFavorite(item);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
       <DetailCard item={item} />
       <Button
-        title={isFavorite(item) ? 'Added': 'Add to Favorite'}
-        onPress={addFavorite}
+        title={isFavorite(item) ? "Added" : "Add to Favorite"}
+        onPress={addToFavorites}
         Icon={HeartIcon}
       />
     </View>

@@ -2,6 +2,7 @@ import { StyleSheet, Image, View, Text, Pressable } from "react-native";
 import React from "react";
 import { responsive } from "../utils/responsive";
 import { useTheme } from "@react-navigation/native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 export const Card = ({ item, onPress }) => {
   const { colors } = useTheme();
@@ -25,7 +26,10 @@ export const Card = ({ item, onPress }) => {
   };
 
   return (
-    <Pressable style={[styles.container, containerStyle]} onPress={onPress}>
+    <TouchableWithoutFeedback
+      style={[styles.container, containerStyle]}
+      onPress={onPress}
+    >
       <Image source={{ uri: item?.image }} style={styles.image} />
       <View style={styles.rightContainer}>
         <Text style={[styles.name, textStyle]} numberOfLines={1}>
@@ -48,14 +52,14 @@ export const Card = ({ item, onPress }) => {
           {item?.location?.name}
         </Text>
       </View>
-    </Pressable>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     height: responsive.number(150),
-    width: "100%",
+    width: responsive.deviceWidth - responsive.number(32),
     marginBottom: responsive.number(16),
     borderRadius: responsive.number(16),
     padding: responsive.number(4),
