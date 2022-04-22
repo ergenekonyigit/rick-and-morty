@@ -13,6 +13,7 @@ import HeartIcon from "../assets/icons/heart.svg";
 import { Header } from "../components";
 import { darkTheme, lightTheme } from "../utils/theme";
 import { FavoritesProvider } from "../context/FavoritesContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -66,35 +67,40 @@ function AppNavigator() {
   const scheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <FavoritesProvider>
-        <NavigationContainer
-          theme={scheme === "light" ? lightTheme : darkTheme}
-        >
-          <Stack.Navigator
-            screenOptions={{
-              presentation: "fullScreenModal",
-              animation: "slide_from_bottom",
-            }}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <FavoritesProvider>
+          <NavigationContainer
+            theme={scheme === "light" ? lightTheme : darkTheme}
           >
-            <Stack.Screen
-              name="Main"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Details"
-              component={Details}
-              options={({ route }) => ({
-                header: () => (
-                  <Header title={route?.params?.item?.name ?? "Detail"} back />
-                ),
-              })}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </FavoritesProvider>
-    </SafeAreaProvider>
+            <Stack.Navigator
+              screenOptions={{
+                presentation: "fullScreenModal",
+                animation: "slide_from_bottom",
+              }}
+            >
+              <Stack.Screen
+                name="Main"
+                component={TabNavigator}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Details"
+                component={Details}
+                options={({ route }) => ({
+                  header: () => (
+                    <Header
+                      title={route?.params?.item?.name ?? "Detail"}
+                      back
+                    />
+                  ),
+                })}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </FavoritesProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 

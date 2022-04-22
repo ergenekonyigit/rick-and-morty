@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React from "react";
 import { useTheme } from "@react-navigation/native";
 import Animated, {
@@ -27,7 +27,9 @@ export const Favorites = ({ navigation }) => {
   const { favorites } = useFavorites();
   const { colors } = useTheme();
 
-  const renderItem = ({ item }) => <FavoriteCard item={item} />;
+  const renderItem = ({ item }) => (
+    <FavoriteCard item={item} navigation={navigation} />
+  );
 
   const keyExtractor = (item) => `${item?.id}`;
 
@@ -53,15 +55,35 @@ export const Favorites = ({ navigation }) => {
   );
 };
 
-const FavoriteCard = ({ item }) => {
+const TOUCH_SLOP = 5;
+const TIME_TO_ACTIVATE_PAN = 400;
+
+const FavoriteCard = ({ item, navigation }) => {
   const { removeFavorite } = useFavorites();
+  const touchStart = useSharedValue({ x: 0, y: 0, time: 0 });
   const transitionValueX = useSharedValue(0);
   const start = useSharedValue(0);
   const { colors } = useTheme();
 
   const gesture = Gesture.Pan()
-    .onStart(() => {
-      console.log("started gesture");
+    .manualActivation(true)
+    .onTouchesDown((e) => {
+      touchStart.value = {
+        x: e.changedTouches[0].x,
+        y: e.changedTouches[0].y,
+        time: Date.now(),
+      };
+    })
+    .onTouchesMove((e, state) => {
+      if (Date.now() - (touchStart.value.time > TIME_TO_ACTIVATE_PAN)) {
+        console.log("aaaaa");
+        state.activate();
+      } else if (
+        Math.abs(touchStart.value.x - e.changedTouches[0].x) > TOUCH_SLOP ||
+        Math.abs(touchStart.value.y - e.changedTouches[0].y) > TOUCH_SLOP
+      ) {
+        state.fail();
+      }
     })
     .onUpdate((e) => {
       if (e.translationX + start.value < 0) {
@@ -69,7 +91,6 @@ const FavoriteCard = ({ item }) => {
       }
     })
     .onEnd((e) => {
-      console.log("aaaa", e);
       start.value = transitionValueX.value;
       if (transitionValueX.value < -200) {
         runOnJS(removeFavorite)(item);
@@ -127,7 +148,7 @@ const FavoriteCard = ({ item }) => {
         <Animated.View style={animatedStyles}>
           <Card
             item={item}
-            //onPress={() => navigation.navigate("Details", { item })}
+            onPress={() => navigation.navigate("Details", { item })}
           />
         </Animated.View>
       </GestureDetector>

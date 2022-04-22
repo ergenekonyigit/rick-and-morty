@@ -8,90 +8,85 @@ import { useFavorites } from "../context/FavoritesContext";
 import HeartIcon from "../assets/icons/heart.svg";
 import HeartIconFill from "../assets/icons/heartFill.svg";
 
-const CardContainer = React.memo(
-  ({ item, onPress, isFavorite, removeFavorite, addFavorite }) => {
-    const { colors } = useTheme();
+const CardContainer = ({
+  item,
+  onPress,
+  isFavorite,
+  removeFavorite,
+  addFavorite,
+}) => {
+  const { colors } = useTheme();
 
-    const handleFavorites = async () => {
-      if (isFavorite) {
-        await removeFavorite(item);
-      } else {
-        await addFavorite(item);
-      }
-    };
-
-    const containerStyle = {
-      backgroundColor: colors.appCard,
-    };
-
-    const textLabelStyle = {
-      color: colors.secondaryText,
-      width: responsive.number(170),
-    };
-
-    const textStyle = {
-      color: colors.text,
-      width: responsive.number(170),
-    };
-
-    const statusStyle = {
-      backgroundColor: item?.status === "Alive" ? colors.alive : colors.dead,
-    };
-
-    if (item.id == 1) {
-      console.log("render");
+  const handleFavorites = async () => {
+    if (isFavorite) {
+      await removeFavorite(item);
+    } else {
+      await addFavorite(item);
     }
+  };
 
-    return (
-      <>
-        <TouchableWithoutFeedback
-          style={[styles.container, containerStyle]}
-          onPress={onPress}
-        >
-          <Image source={{ uri: item?.image }} style={styles.image} />
-          <View style={styles.rightContainer}>
-            <Text style={[styles.name, textStyle]} numberOfLines={1}>
-              {item?.name}
-            </Text>
-            <View style={styles.statusContainer}>
-              <View style={[styles.status, statusStyle]} />
-              <Text style={[styles.statusText, textStyle]}>
-                {item?.status} - {item?.species}
-              </Text>
-            </View>
+  const containerStyle = {
+    backgroundColor: colors.appCard,
+  };
 
-            <Text style={[styles.detailLabel, textLabelStyle]}>Gender:</Text>
-            <Text style={[styles.detail, textStyle]}>{item?.gender}</Text>
+  const textLabelStyle = {
+    color: colors.secondaryText,
+    width: responsive.number(170),
+  };
 
-            <Text style={[styles.detailLabel, textLabelStyle]}>
-              Last known location:
-            </Text>
-            <Text style={[styles.detail, textStyle]} numberOfLines={1}>
-              {item?.location?.name}
+  const textStyle = {
+    color: colors.text,
+    width: responsive.number(170),
+  };
+
+  const statusStyle = {
+    backgroundColor: item?.status === "Alive" ? colors.alive : colors.dead,
+  };
+
+  if (item.id == 1) {
+    console.log("render");
+  }
+
+  return (
+    <>
+      <TouchableOpacity
+        activeOpacity={1}
+        style={[styles.container, containerStyle]}
+        onPress={onPress}
+      >
+        <Image source={{ uri: item?.image }} style={styles.image} />
+        <View style={styles.rightContainer}>
+          <Text style={[styles.name, textStyle]} numberOfLines={1}>
+            {item?.name}
+          </Text>
+          <View style={styles.statusContainer}>
+            <View style={[styles.status, statusStyle]} />
+            <Text style={[styles.statusText, textStyle]}>
+              {item?.status} - {item?.species}
             </Text>
           </View>
-        </TouchableWithoutFeedback>
-        <TouchableOpacity style={styles.icon} onPress={handleFavorites}>
-          {isFavorite ? (
-            <HeartIconFill color="red" />
-          ) : (
-            <HeartIcon color="white" />
-          )}
-        </TouchableOpacity>
-      </>
-    );
-  },
-  (prevProps, nextProps) => {
-    const { isFavorite: prevIsFavorite } = prevProps || {};
-    const { isFavorite: nextIsFavorite } = nextProps || {};
 
-    if (nextIsFavorite === prevIsFavorite) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-);
+          <Text style={[styles.detailLabel, textLabelStyle]}>Gender:</Text>
+          <Text style={[styles.detail, textStyle]}>{item?.gender}</Text>
+
+          <Text style={[styles.detailLabel, textLabelStyle]}>
+            Last known location:
+          </Text>
+          <Text style={[styles.detail, textStyle]} numberOfLines={1}>
+            {item?.location?.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.icon} onPress={handleFavorites}>
+        {isFavorite ? (
+          <HeartIconFill color="red" />
+        ) : (
+          <HeartIcon color="white" />
+        )}
+      </TouchableOpacity>
+    </>
+  );
+};
 
 export const Card = ({ item, onPress }) => {
   const { favorites, addFavorite, removeFavorite } = useFavorites();

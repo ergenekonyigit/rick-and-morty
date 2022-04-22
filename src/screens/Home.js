@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
   ActivityIndicator,
   RefreshControl,
 } from "react-native";
@@ -17,6 +16,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { FlatList } from "react-native-gesture-handler";
 
 const initialState = {
   characters: [],
